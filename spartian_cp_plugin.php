@@ -394,6 +394,59 @@ foreach($mods as $mod)
 								<td class=\"trow1 smalltext\"><a class=\"usercp_nav_item usercp_nav_home\" href=\"spartian_cp_plugin.php?action=approve_close\">Approve & Close Event</a></td>
 							</tr>";
 							
+		if(isset($_GET['action']) && $_GET['action'] == 'approve_close')
+		{
+			
+			$tableEvents = '';
+			
+			//Load Active Events
+			$query = $db->write_query("SELECT * FROM `mybb_zcombat_events` WHERE `status` = 1 ORDER BY `date` ASC");
+
+			while($cacheJSON = $db->fetch_array($query)) {
+				$cache = json_decode($cacheJSON['cache'], true);
+				//Create Tables
+				$tableEvents .= "<tr><td class=\"tcat\" align=\"left\" valign=\"top\" colspan=\"4\">
+				<form action=\"spartian_cp_plugin.php?action=approve_close\" method=\"POST\">
+				{$cache['title']}</td></tr>";
+				
+				//Query Ea User For Events.
+					$query1 = $db->write_query("SELECT * FROM `mybb_zcombat_participants` WHERE `eventID` = {$cacheJSON['id']}  ORDER BY `userId` ASC");
+					$int = 0;
+						
+					while($cacheJSONp = $db->fetch_array($query1)) {
+						$u = get_user($cacheJSONp['userId']);
+						//Create Tables
+							$int++;
+							if($int == 1)
+							{
+								$tableEvents .= "<tr>";
+							}
+							
+							$tableEvents .= "<td class=\"trow1\" align=\"center\" valign=\"top\"><input type=\"checkbox\" name=\"userID\" value=\"{$cacheJSONp['userId']}\">{$u['username']}</td>";
+							
+							if($int == 4)
+							{
+								$tableEvents .= "</tr>";
+								$int = 0;
+							}
+					}
+					$tableEvents .= "<tr><td class=\"trow1\" align=\"left\" valign=\"top\"><input type=\"submit\" name=\"add_member\" disabled value=\"Approve Event & Close\"></td></tr>";
+			}
+		$form .= "
+			
+			<table border=\"0\" cellspacing=\"0\" width=\"100%\" cellpadding=\"5\" class=\"tborder\">
+				<thead><tr>
+					<td class=\"thead\" colspan=\"4\">
+						<div><strong><img src=\"skills/overall.gif\">Approve Event</a></strong></div>
+					</td>
+				</thead></tr>
+				
+				<tbody>
+						{$tableEvents}
+				</tbody>
+			</table></form>";
+		}
+							
 							
 		if(isset($_GET['action']) && $_GET['action'] == 'add_member_to_event')
 		{
