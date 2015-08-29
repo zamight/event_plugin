@@ -396,6 +396,31 @@ foreach($mods as $mod)
 							
 		if(isset($_GET['action']) && $_GET['action'] == 'approve_close')
 		{
+			//Check If Event Was Submitted.
+			
+			if(isset($_POST['eventID']))
+			{
+				$userIDList = $_POST['userID'];
+				$query = $db->write_query("SELECT * FROM `mybb_zcombat_events` WHERE `status` = 1 AND id = {$_POST['eventID']} LIMIT 1");
+				
+				if($results = $db->fetch_array($query))
+				{
+					$query = $db->write_query("SELECT * FROM `mybb_zcombat_participants` WHERE `eventID` = {$_POST['eventID']}");
+					while($fetchParticipant = $db->fetch_array($query)) {
+						if(!in_array($fetchParticipant['userId'], $userIDList))
+						{
+							$eventID = "`id` = '{$fetchParticipant['id']}'";
+							$db->delete_query('zcombat_participants', $eventID);
+						}
+						else
+						{
+							$db->write_query("UPDATE mybb_users SET `newpoints` = newpoints+20 WHERE `uid` = {$fetchParticipant['userId']}");
+						}
+					}
+					//Close Event
+					$db->update_query('zcombat_events', array('status' => 0), "`id` = {$_POST['eventID']}");
+				}
+			}
 			
 			$tableEvents = '';
 			
@@ -422,7 +447,7 @@ foreach($mods as $mod)
 								$tableEvents .= "<tr>";
 							}
 							
-							$tableEvents .= "<td class=\"trow1\" align=\"center\" valign=\"top\"><input type=\"checkbox\" name=\"userID\" value=\"{$cacheJSONp['userId']}\">{$u['username']}</td>";
+							$tableEvents .= "<td class=\"trow1\" align=\"center\" valign=\"top\"><input type=\"checkbox\" name=\"userID[]\" value=\"{$cacheJSONp['userId']}\">{$u['username']}</td>";
 							
 							if($int == 4)
 							{
@@ -430,7 +455,7 @@ foreach($mods as $mod)
 								$int = 0;
 							}
 					}
-					$tableEvents .= "<tr><td class=\"trow1\" align=\"left\" valign=\"top\"><input type=\"submit\" name=\"add_member\" disabled value=\"Approve Event & Close\"></td></tr>";
+					$tableEvents .= "<tr><td class=\"trow1\" align=\"left\" valign=\"top\"><input type=\"hidden\" name=\"eventID\" value=\"{$cacheJSON['id']}\"><input type=\"submit\" name=\"add_member\" value=\"Approve Event & Close\"></form></td></tr>";
 			}
 		$form .= "
 			
@@ -444,7 +469,7 @@ foreach($mods as $mod)
 				<tbody>
 						{$tableEvents}
 				</tbody>
-			</table></form>";
+			</table>";
 		}
 							
 							
