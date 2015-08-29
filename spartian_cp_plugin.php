@@ -56,15 +56,15 @@ if($_POST['create_event']) {
 }
 $eventTable = '';
 
-if(empty($_GET['action'])) {
+if(empty($mybb->input['action'])) {
 	
 	
 	
 	//Revier TYable
 			//if Registering
-			if (isset($_GET['register_for_event']))
+			if (isset($mybb->input['register_for_event']))
 			{
-				$eventArray = array('userId' => $mybb->user['uid'], 'eventID' => $_GET['register_for_event']);
+				$eventArray = array('userId' => $mybb->user['uid'], 'eventID' => $mybb->input['register_for_event']);
 				if($db->insert_query('zcombat_participants', $eventArray))
 				{
 					//Do Nothing
@@ -137,7 +137,7 @@ $form .= "
 //End Index
 
 //Start Past Events
-if(isset($_GET['action']) && $_GET['action'] == 'past_events') {
+if(isset($mybb->input['action']) && $mybb->input['action'] == 'past_events') {
 		//if Registering
 	
 		add_breadcrumb('Past Participated Events', "spartian_cp_plugin.php?action=past_events");
@@ -147,7 +147,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'past_events') {
 	while($fetchParticipant = $db->fetch_array($query))
 	{
 		
-		if (isset($_GET['unregister_for_event']) && $_GET['unregister_for_event'] == $fetchParticipant['id'] && $fetchParticipant['userId'] == $mybb->user['uid'])
+		if (isset($mybb->input['unregister_for_event']) && $mybb->input['unregister_for_event'] == $fetchParticipant['id'] && $fetchParticipant['userId'] == $mybb->user['uid'])
 		{
 			$eventArray = "`id` = '{$fetchParticipant['id']}'";
 				if($db->delete_query('zcombat_participants', $eventArray))
@@ -203,7 +203,7 @@ $form .= "
 
 //End Past Events
 
-if(isset($_GET['action']) && $_GET['action'] == "add_event") {
+if(isset($mybb->input['action']) && $mybb->input['action'] == "add_event") {
 	add_breadcrumb('Add Events', "spartian_cp_plugin.php?action=add_event");
 $form .= "{$post_report}<form action=\"spartian_cp_plugin.php?action=add_event\" method=\"POST\">
 			<table border=\"0\" cellspacing=\"0\" width=\"100%\" cellpadding=\"5\" class=\"tborder\">
@@ -241,7 +241,7 @@ $form .= "{$post_report}<form action=\"spartian_cp_plugin.php?action=add_event\"
 
 
 //Show Participating
-if(isset($_GET['action']) && $_GET['action'] == 'participating')
+if(isset($mybb->input['action']) && $mybb->input['action'] == 'participating')
 {
 	
 		//if Registering
@@ -253,7 +253,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'participating')
 	while($fetchParticipant = $db->fetch_array($query))
 	{
 		
-		if (isset($_GET['unregister_for_event']) && $_GET['unregister_for_event'] == $fetchParticipant['id'] && $fetchParticipant['userId'] == $mybb->user['uid'])
+		if (isset($mybb->input['unregister_for_event']) && $mybb->input['unregister_for_event'] == $fetchParticipant['id'] && $fetchParticipant['userId'] == $mybb->user['uid'])
 		{
 			$eventArray = "`id` = '{$fetchParticipant['id']}'";
 				if($db->delete_query('zcombat_participants', $eventArray))
@@ -308,19 +308,19 @@ $form .= "
 //End Show Participating
 
 //Show Whos Going
-if(isset($_GET['action']) && $_GET['action'] == 'participats')
+if(isset($mybb->input['action']) && $mybb->input['action'] == 'participats')
 {
 	
 		//if Registering
 	
 		add_breadcrumb('Add Events', "spartian_cp_plugin.php?action=participats");
 	//Load Sql
-	$query = $db->write_query("SELECT * FROM `mybb_zcombat_participants` WHERE `eventID` = {$_GET['eventID']}");
+	$query = $db->write_query("SELECT * FROM `mybb_zcombat_participants` WHERE `eventID` = {$mybb->input['eventID']}");
 
 	while($fetchParticipant = $db->fetch_array($query))
 	{
 		
-		if (isset($_GET['unregister_for_event']) && $_GET['unregister_for_event'] == $fetchParticipant['id'] && $fetchParticipant['userId'] == $mybb->user['uid'])
+		if (isset($mybb->input['unregister_for_event']) && $mybb->input['unregister_for_event'] == $fetchParticipant['id'] && $fetchParticipant['userId'] == $mybb->user['uid'])
 		{
 			$eventArray = "`id` = '{$fetchParticipant['id']}'";
 				if($db->delete_query('zcombat_participants', $eventArray))
@@ -394,7 +394,7 @@ foreach($mods as $mod)
 								<td class=\"trow1 smalltext\"><a class=\"usercp_nav_item usercp_nav_home\" href=\"spartian_cp_plugin.php?action=approve_close\">Approve & Close Event</a></td>
 							</tr>";
 							
-		if(isset($_GET['action']) && $_GET['action'] == 'approve_close')
+		if(isset($mybb->input['action']) && $mybb->input['action'] == 'approve_close')
 		{
 			//Check If Event Was Submitted.
 			
@@ -473,7 +473,7 @@ foreach($mods as $mod)
 		}
 							
 							
-		if(isset($_GET['action']) && $_GET['action'] == 'add_member_to_event')
+		if(isset($mybb->input['action']) && $mybb->input['action'] == 'add_member_to_event')
 		{
 			//add_breadcrumb('Add Events', "spartian_cp_plugin.php?action=add_event");
 			
