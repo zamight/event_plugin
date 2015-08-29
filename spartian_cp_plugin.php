@@ -29,20 +29,20 @@ foreach($timezones as $timezone) {
 
 $post_report = "";
 
-if($_POST['create_event']) {
+if($mybb->input['create_event']) {
 	
 	add_breadcrumb('Create Events', "spartian_cp_plugin.php?action=add_event");
 	
 	$cache = array();
 	$cache["host"] = $mybb->user['uid'];
-	$cache["time"] = $_POST['time'];
-	$cache["date"] = $_POST['date'];
-	$cache["title"] = $_POST['title'];
-	$cache["timezone"] = $_POST['timeZone'];
-	$cache["location"] = $_POST['location'];
-	$cache["special_instructions"] = $_POST['special_instructions'];
+	$cache["time"] = $mybb->input['time'];
+	$cache["date"] = $mybb->input['date'];
+	$cache["title"] = $mybb->input['title'];
+	$cache["timezone"] = $mybb->input['timeZone'];
+	$cache["location"] = $mybb->input['location'];
+	$cache["special_instructions"] = $mybb->input['special_instructions'];
 	
-	$queryArray = array("date" => $_POST['date'], "cache" => json_encode($cache));
+	$queryArray = array("date" => $mybb->input['date'], "cache" => json_encode($cache));
 	
 	if($db->insert_query("zcombat_events", $queryArray))
 	{
@@ -398,14 +398,14 @@ foreach($mods as $mod)
 		{
 			//Check If Event Was Submitted.
 			
-			if(isset($_POST['eventID']))
+			if(isset($mybb->input['eventID']))
 			{
-				$userIDList = $_POST['userID'];
-				$query = $db->write_query("SELECT * FROM `mybb_zcombat_events` WHERE `status` = 1 AND id = {$_POST['eventID']} LIMIT 1");
+				$userIDList = $mybb->input['userID'];
+				$query = $db->write_query("SELECT * FROM `mybb_zcombat_events` WHERE `status` = 1 AND id = {$mybb->input['eventID']} LIMIT 1");
 				
 				if($results = $db->fetch_array($query))
 				{
-					$query = $db->write_query("SELECT * FROM `mybb_zcombat_participants` WHERE `eventID` = {$_POST['eventID']}");
+					$query = $db->write_query("SELECT * FROM `mybb_zcombat_participants` WHERE `eventID` = {$mybb->input['eventID']}");
 					while($fetchParticipant = $db->fetch_array($query)) {
 						if(!in_array($fetchParticipant['userId'], $userIDList))
 						{
@@ -418,7 +418,7 @@ foreach($mods as $mod)
 						}
 					}
 					//Close Event
-					$db->update_query('zcombat_events', array('status' => 0), "`id` = {$_POST['eventID']}");
+					$db->update_query('zcombat_events', array('status' => 0), "`id` = {$mybb->input['eventID']}");
 				}
 			}
 			
@@ -481,12 +481,12 @@ foreach($mods as $mod)
 			
 			$post_report = '';
 			
-			if(isset($_POST['users']))
+			if(isset($mybb->input['users']))
 			{
-				$usersIDs = $_POST['users'];
+				$usersIDs = $mybb->input['users'];
 				
 				foreach($usersIDs as $userID){
-					$query = array("eventID" => $_POST['eventID'], "userId" => $userID);
+					$query = array("eventID" => $mybb->input['eventID'], "userId" => $userID);
 		
 					if($db->insert_query("zcombat_participants", $query))
 					{
